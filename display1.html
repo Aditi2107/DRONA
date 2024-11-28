@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Drona - Frequency Graph</title>
+  <script src="https://code.highcharts.com/highcharts.js"></script> 
+</head>
+<body>
+  <div id="container" style="width: 100%; height: 400px;"></div>
+  <div id="alert" style="display: none; color: red;">Danger! Frequency is outside the safe range.</div>
+
+  <script>
+    // Sample data for the chart
+    var data = [
+      [0.1, 100],
+      [0.2, 105],
+      [0.3, 110],
+      [0.4, 115],
+      // ...
+    ];
+
+    // Create the chart
+    var chart = Highcharts.chart('container', {
+      chart: {
+        type: 'line',
+        events: {
+          load: function() {
+            var alertDiv = document.getElementById('alert');
+
+            // Check if the frequency is within the safe range (e.g., 60-80)
+            function checkFrequency(frequency) {
+              if (frequency >=80) {
+                // Show the danger alert
+                alertDiv.style.display = 'block';
+              } else {
+                // Hide the danger alert
+                alertDiv.style.display = 'none';
+              }
+            }
+
+            // Start updating the chart with new data every second
+            setInterval(function() {
+              // Get the latest frequency value
+              var frequency = Math.random() * 100;
+
+              // Add the new frequency to the data array
+              data.push([data.length, frequency]);
+
+              // Remove the first data point if the array exceeds a certain length
+              if (data.length > 10) {
+                data.shift();
+              }
+
+              // Update the chart series with the new data
+              chart.series[0].setData(data);
+
+              // Check if the frequency is within the safe range
+              checkFrequency(frequency);
+            }, 1000);
+          }
+        }
+      },
+
+      title: {
+        text: 'Frequency Graph'
+      },
+
+      xAxis: {
+        title: {
+          text: 'Time'
+        }
+      },
+
+      yAxis: {
+        title: {
+          text: 'Frequency'
+        }
+      },
+
+      plotOptions: {
+        line: {
+          zones: [{
+            value: 80,
+            color: 'blue'
+          }, {
+            color: 'red'
+          }]
+        }
+      },
+
+      series: [{
+        name: 'Frequency',
+        data: data
+      }]
+    });
+  </script>
+</body>
+</html>
